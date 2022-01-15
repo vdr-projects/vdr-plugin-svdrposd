@@ -1,5 +1,14 @@
-VDR Plugin 'svdrpext' Revision History
----------------------------------------
+VDR Plugin 'svdrpext/svdrposd' Revision History
+-----------------------------------------------
+
+2009-10-07: Version 0.1.0
+- renamed plugin from svdrpext to svdrposd
+- new command LSTO
+- number of items parameter to OSDI is now optional
+- improved selection of current item if multiple items have the same text
+- fixed memleak; no longer relying on OsdClear() being called before
+  assigning new values
+- code cleanup
 
 2006-06-01: Version 0.0.1
 

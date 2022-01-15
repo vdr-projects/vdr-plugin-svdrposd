@@ -4,8 +4,8 @@
  * See the README file for copyright information and how to reach the author.
  */
 
-#ifndef _SVDRPEXT_STATUS__H
-#define _SVDRPEXT_STATUS__H
+#ifndef _SVDRPOSD_STATUS__H
+#define _SVDRPOSD_STATUS__H
 
 #include <vdr/tools.h>
 #include <vdr/status.h>
@@ -13,18 +13,18 @@
 #define MENU_OPEN  901
 #define MENU_CLOSED 902
 
-class cSvdrpExtItem: public cListObject {
+class cSvdrpOsdItem: public cListObject {
 	private:
 		char *text;
 	public:
-		const char* Text() { return text; }
-		void Update(char* Text) { free(text); text = Text; };
-		cSvdrpExtItem(char* Text): text(Text) {};
-		~cSvdrpExtItem() { free(text); }
+		const char* Text() { return text; } const
+		void Update(const char* Text) { free(text); text = Text ? strdup(Text) : NULL; };
+		cSvdrpOsdItem(const char* Text) { text = Text ? strdup(Text) : NULL; };
+		~cSvdrpOsdItem() { free(text); }
 };
 
-class cSvdrpExtStatus: public cStatus {
-	friend class cPluginSvdrpExt;
+class cSvdrpOsdStatus: public cStatus {
+	friend class cPluginSvdrpOsd;
 	public:
 		enum { MaxTabs = 6 };
 	private:
@@ -35,14 +35,14 @@ class cSvdrpExtStatus: public cStatus {
 		char *yellow;
 		char *blue;
 		char *text;
-		cList<cSvdrpExtItem>	items;
+		cList<cSvdrpOsdItem>	items;
 		int	selected;
 		unsigned short	tabs[MaxTabs];
 	protected:
 		static void append(char *&tail, char type, const char *src, int max);
 	public:
-		cSvdrpExtStatus();
-		virtual ~cSvdrpExtStatus();
+		cSvdrpOsdStatus();
+		virtual ~cSvdrpOsdStatus();
 
 		virtual void OsdClear();
 		virtual void OsdTitle(const char *Title);
@@ -53,4 +53,4 @@ class cSvdrpExtStatus: public cStatus {
 		virtual void OsdCurrentItem(const char *Text);
 };
 
-#endif //_SVDRPEXT_STATUS__H
+#endif //_SVDRPOSD_STATUS__H

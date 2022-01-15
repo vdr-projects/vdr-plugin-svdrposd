@@ -1,17 +1,17 @@
 #include <string.h>
 #include "status.h"
 
-cSvdrpExtStatus::cSvdrpExtStatus() {
+cSvdrpOsdStatus::cSvdrpOsdStatus() {
 	title = message = text = NULL;
 	red = green = yellow = blue = NULL;
 	selected = -1;
 	memset(&tabs, 0, sizeof(tabs));
 }
-cSvdrpExtStatus::~cSvdrpExtStatus() {
+cSvdrpOsdStatus::~cSvdrpOsdStatus() {
 	OsdClear();
 }
 
-void cSvdrpExtStatus::OsdClear() {
+void cSvdrpOsdStatus::OsdClear() {
 	free(title);
 	free(message);
 	free(red);
@@ -26,34 +26,28 @@ void cSvdrpExtStatus::OsdClear() {
 	memset(&tabs, 0, sizeof(tabs));
 }
 
-void cSvdrpExtStatus::OsdTitle(const char *Text) {
-	if (Text) {
-		title = strdup(Text);
-	}
+void cSvdrpOsdStatus::OsdTitle(const char *Title) {
+	free(title);
+	title = Title ? strdup(Title) : NULL;
 }
 
-void cSvdrpExtStatus::OsdStatusMessage(const char *Message) {
-	if (Message) {
-		message = strdup(Message);
-	}
+void cSvdrpOsdStatus::OsdStatusMessage(const char *Message) {
+	free(message);
+	message = Message ? strdup(Message) : NULL;
 }
 
-void cSvdrpExtStatus::OsdHelpKeys(const char *Red, const char *Green, const char *Yellow, const char *Blue) {
-	if (Red) {
-		red = strdup(Red);
-	}
-	if (Green) {
-		green = strdup(Green);
-	}
-	if (Yellow) {
-		yellow = strdup(Yellow);
-	}
-	if (Blue) {
-		blue = strdup(Blue);
-	}
+void cSvdrpOsdStatus::OsdHelpKeys(const char *Red, const char *Green, const char *Yellow, const char *Blue) {
+	free(red);
+	red = Red ? strdup(Red) : NULL;
+	free(green);
+	green = Green ? strdup(Green) : NULL;
+	free(yellow);
+	yellow = Yellow ? strdup(Yellow) : NULL;
+	free(blue);
+	blue = Blue ? strdup(Blue) : NULL;
 }
 
-void cSvdrpExtStatus::OsdItem(const char *Text, int Index) {
+void cSvdrpOsdStatus::OsdItem(const char *Text, int Index) {
 	const char* tab;
 	const char* colStart = Text;
 	for (int col = 0; col < MaxTabs &&
@@ -63,32 +57,51 @@ void cSvdrpExtStatus::OsdItem(const char *Text, int Index) {
 			tabs[col] = width;
 		colStart = colStart + width;
 	}
-	char* s = strdup(Text);
-	items.Add(new cSvdrpExtItem(s));
+	items.Add(new cSvdrpOsdItem(Text));
 }
 
-void cSvdrpExtStatus::OsdCurrentItem(const char *Text) {
+void cSvdrpOsdStatus::OsdCurrentItem(const char *Text) {
 	int i = -1;
-	char* s = strdup(Text);
-	cSvdrpExtItem * currentItem = NULL;
-	for (cSvdrpExtItem *item = items.First(); item; item = items.Next(item)) {
+	int best = -1;
+	int dist = items.Count();
+	cSvdrpOsdItem * currentItem = NULL;
+	for (cSvdrpOsdItem *item = items.First(); item; item = items.Next(item)) {
 		if (++i == selected)
 			currentItem = item;
-		if (strcmp(item->Text(), s) == 0) {
-			selected = i;
-			free(s);
-			return;
+		if (strcmp(item->Text(), Text) == 0) {
+			if (abs(i - selected) < dist) {
+				// best match is the one closest to previous position
+				best = i;
+				dist = abs(i - selected);
+			}
+			else if (selected < 0) {
+				// previous position unknown - take first match
+				best = i;
+				break;
+			}
+			else {
+				// we already have a better match, so we're done
+				break;
+			}
 		}
 	}
-	// no match: the same item is still selected but its text changed
-	if (currentItem) {
-		currentItem->Update(s);
+	if (best >= 0) {
+		// found matching item
+		selected = best;
+	}
+	else if (currentItem) {
+		// no match: the same item is still selected but its text changed
+		currentItem->Update(Text);
 	}
 }
 
-void cSvdrpExtStatus::OsdTextItem(const char *Text, bool Scroll) {
+void cSvdrpOsdStatus::OsdTextItem(const char *Text, bool Scroll) {
+	free(text);
 	if (Text) {
 		text = strdup(Text);
 		strreplace(text, '\n', '|');
+	}
+	else {
+		text = NULL;
 	}
 }

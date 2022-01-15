@@ -7,7 +7,7 @@
 # This name will be used in the '-P...' option of VDR to load the plugin.
 # By default the main source file also carries this name.
 #
-PLUGIN = svdrpext
+PLUGIN = svdrposd
 
 ### The version number of this plugin (taken from the main source file):
 
@@ -48,6 +48,9 @@ DEFINES += -D_GNU_SOURCE -DPLUGIN_NAME_I18N='"$(PLUGIN)"'
 
 OBJS = $(PLUGIN).o status.o
 
+.PHONY: all dist clean
+all: libvdr-$(PLUGIN).so
+
 ### Implicit rules:
 
 %.o: %.c
@@ -64,11 +67,8 @@ $(DEPFILE): Makefile
 
 ### Targets:
 
-all: libvdr-$(PLUGIN).so
-
 libvdr-$(PLUGIN).so: $(OBJS)
 	$(CXX) $(CXXFLAGS) -shared $(OBJS) -o $@
-#	@cp $@ $(LIBDIR)/$@.$(VDRVERSION)
 	@cp $@ $(LIBDIR)/$@.$(APIVERSION)
 
 dist: clean
