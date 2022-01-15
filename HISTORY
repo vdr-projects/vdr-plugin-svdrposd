@@ -1,11 +1,17 @@
 VDR Plugin 'svdrpext/svdrposd' Revision History
 -----------------------------------------------
 
+2013-06-07: Version 1.0.0
+
+- Updated Makefile for VDR 1.7.36
+
 2011-08-01: Version 0.1.1
+
 - fixed line termination of SVDRP replies. Each line ended with \r\r\n
   (reported by Henrik Niehaus)
 
 2009-10-07: Version 0.1.0
+
 - renamed plugin from svdrpext to svdrposd
 - new command LSTO
 - number of items parameter to OSDI is now optional
