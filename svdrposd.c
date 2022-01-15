@@ -16,7 +16,7 @@
 
 #define SVDRPOSD_BUFSIZE KILOBYTE(4)
 
-static const char *VERSION        = "0.1.0";
+static const char *VERSION        = "0.1.1";
 static const char *DESCRIPTION    = "Publish OSD menu via SVDRP";
 
 class cPluginSvdrpOsd : public cPlugin {
@@ -197,7 +197,7 @@ bool cPluginSvdrpOsd::AppendItems(const char *Option)
 
   // columns
   for (int i = 0; ok && i < status->MaxTabs && status->tabs[i] != 0; i++)
-	  ok = Append("C:%hu\r\n", status->tabs[i]);
+	  ok = Append("C:%hu\n", status->tabs[i]);
 
   // items
   int current = 0;
@@ -208,7 +208,7 @@ bool cPluginSvdrpOsd::AppendItems(const char *Option)
 
   cSvdrpOsdItem *item = status->items.Get(current);
   while (ok && item && maxitems != 0) {
-	  ok = Append("%c:%s\r\n", current == status->selected ? 'S' : 'I', item->Text());
+	  ok = Append("%c:%s\n", current == status->selected ? 'S' : 'I', item->Text());
 	  current++;
 	  maxitems--;
 	  item = status->items.Next(item);
@@ -241,21 +241,21 @@ cString cPluginSvdrpOsd::SVDRPCommand(const char *Command, const char *Option, i
 	  bool ok = true;
 
 	  if (status->title)
-		  ok = Append("T:%s\r\n", status->title);
+		  ok = Append("T:%s\n", status->title);
 	  if (ok && status->items.Count() > 0)
 		  ok = AppendItems(Option);
 	  if (ok && status->text)
-		  ok = Append("X:%s\r\n", status->text);
+		  ok = Append("X:%s\n", status->text);
 	  if (ok && status->red)
-		  ok = Append("R:%s\r\n", status->red);
+		  ok = Append("R:%s\n", status->red);
 	  if (ok && status->green)
-		  ok = Append("G:%s\r\n", status->green);
+		  ok = Append("G:%s\n", status->green);
 	  if (ok && status->yellow)
-		  ok = Append("Y:%s\r\n", status->yellow);
+		  ok = Append("Y:%s\n", status->yellow);
 	  if (ok && status->blue)
-		  ok = Append("B:%s\r\n", status->blue);
+		  ok = Append("B:%s\n", status->blue);
 	  if (ok && status->message)
-		  ok = Append("M:%s\r\n", status->message);
+		  ok = Append("M:%s\n", status->message);
 	  if (!ok) {
 		  Reset();
 		  ReplyCode = 451;
@@ -286,7 +286,7 @@ cString cPluginSvdrpOsd::SVDRPCommand(const char *Command, const char *Option, i
 	  const char *yellow = status->yellow;
 	  const char *blue = status->blue;
 	  if (red || green || yellow || blue)
-		  return cString::sprintf("R:%s\r\nG:%s\r\nY:%s\r\nB:%s",
+		  return cString::sprintf("R:%s\nG:%s\nY:%s\nB:%s",
 				  red ? red : "", green ? green : "",
 				  yellow ? yellow : "", blue ? blue : "");
   }
